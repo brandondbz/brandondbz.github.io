@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Grid</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #222;
+            color: #000;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            width: 100%;
+            gap: 5px;
+            padding: 5px 0;
+            background: #333;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            padding: 12px 10px;
+            background: #444;
+            border: none;
+            font-size: 16px;
+            transition: 0.3s ease;
+        }
+
+            .tab:hover {
+                background: #666;
+            }
+
+        .active {
+            background: #888;
+        }
+
+        .content {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+            .content.active {
+                display: block;
+            }
+
+        textarea {
+            width: 80%;
+            height: 150px;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            resize: none;
+            background: #333;
+            color: #000;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #555;
+            color: #000;
+            cursor: pointer;
+            transition: 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            button:hover {
+                background: #777;
+            }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(16, 40px);
+            gap: 5px;
+            justify-content: center;
+        }
+
+            .grid button {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                text-align: center;
+                border-radius: 6px;
+                background: #444;
+                color: #000;
+            }
+
+                .grid button.highlight {
+                    background: red;
+                    transition: background 1s;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab(0)">Simulate</div>
+        <div class="tab" onclick="switchTab(1)">Grid</div>
+    </div>
+
+    <div class="content active" id="simulateTab">
+        <textarea id="textInput" placeholder="Enter simulation commands..."></textarea>
+        <button onclick="startSimulation()">Simulate</button>
+    </div>
+
+    <div class="content" id="gridTab">
+        <div class="grid" id="gridContainer"></div>
+    </div>
+
+    <script>
+        function switchTab(index) {
+            document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === index));
+            document.querySelectorAll('.content').forEach((c, i) => c.classList.toggle('active', i === index));
+        }
+
+        function generateGrid() {
+            const container = document.getElementById("gridContainer");
+            const letters = "ABCDEFGHIJKLMNOP";
+            for (let row = 1; row <= 8; row++) {
+                for (let col = 0; col < 16; col++) {
+                    let pos = letters[col] + row;
+                    let btn = document.createElement("button");
+                    btn.textContent = pos;
+                    btn.setAttribute("data-position", pos);
+                    container.appendChild(btn);
+                }
+            }
+        }
+
+        function highlightButton(position) {
+            const button = document.querySelector(`[data-position="${position}"]`);
+            if (button) {
+                button.classList.add("highlight");
+                setTimeout(() => button.classList.remove("highlight"), 1000);
+            }
+        }
+
+        async function startSimulation() {
+            switchTab(1); // Switch to grid tab
+            const lines = document.getElementById("textInput").value.trim().split(/\r\n|\r|\n/);
+
+            for (const line of lines) {
+                const [position, delay] = line.split(",").map(item => item.trim());
+                if (position && delay) {
+                    highlightButton(position);
+                    await new Promise(resolve => setTimeout(resolve, parseInt(delay, 10)));
+                }
+            }
+        }
+
+        generateGrid();
+    </script>
+
+</body>
+</html>
