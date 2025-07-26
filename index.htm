@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f4f8;
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        #testButton {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #0078d4;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            #testButton:hover {
+                background-color: #005a9e;
+            }
+
+        #successMessage {
+            display: none;
+            margin-top: 20px;
+            font-size: 20px;
+            color: #107c10;
+        }
+    </style>
+    <script src="BLE.js"></script>
+</head>
+<body>
+
+    <button id="testButton" onclick="handleClick()">TEST</button>
+    <div id="successMessage">success</div>
+
+    <script>
+    function pass() {
+      document.getElementById('testButton').style.display = 'none';
+      document.getElementById('successMessage').style.display = 'block';
+    }
+
+    async function handleClick() {
+      // Your custom callback goes here
+        await BLEAvail();
+        let ist =await BLEInstance();
+        if(await ist.connect(null))pass();
+      // Call pass to trigger the UI change
+      //pass();
+    }
+    </script>
+
+</body>
+</html>
